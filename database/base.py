@@ -25,10 +25,32 @@ def add_user(username: str, password: str) -> User:
     return user
 
 
+def change_password(username: str, old_password: str, new_password: str) -> User:
+    with Session(engine) as session:
+        user = session.query(User).filter_by(username=username).first()
+        if user and user.password == old_password:
+            user.password = new_password
+            session.commit()
+            return user
+    return None
+
+
 Base.metadata.create_all(engine)
 
 
 if __name__ == "__main__":
     username = input("Username: ")
     password = input("Password: ")
-    add_user(username, password)
+    if add_user(username, password):
+        print("User added successfully.")
+    else:
+        print("Failed to add user.")
+
+    print("================================")
+    username = input("Username: ")
+    password = input("Old Password: ")
+    new_password = input("New password: ")
+    if change_password(username, password, new_password):
+        print("Password changed successfully.")
+    else:
+        print("Username or password is incorrect.")
