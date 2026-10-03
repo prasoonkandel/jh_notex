@@ -2,7 +2,6 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.base import Base
-from models.note import Note
 
 
 class User(Base):

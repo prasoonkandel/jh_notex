@@ -2,7 +2,6 @@ from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.base import Base
-from models.user import User
 
 
 class Note(Base):
