@@ -12,7 +12,7 @@ class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(25), unique=True)
-    password: Mapped[str] = mapped_column(String(50))
+    password_hash: Mapped[str] = mapped_column(String(50))
 
     notes: Mapped[list["Notes"]] = relationship(back_populates="user")
 
