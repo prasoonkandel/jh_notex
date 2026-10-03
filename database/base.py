@@ -26,6 +26,3 @@ class Note(Base):
     content: Mapped[str] = mapped_column(Text)
 
     user: Mapped["User"] = relationship(back_populates="notes")
-
-
-Base.metadata.create_all(engine)
