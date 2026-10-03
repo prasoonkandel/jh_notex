@@ -1,6 +1,5 @@
 from sqlalchemy import ForeignKey, String, Text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.orm.session import Session
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 from database.connection import engine
 
