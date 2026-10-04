@@ -60,3 +60,17 @@ def change_password(
     session.commit()
 
     return existing_user
+
+
+def change_username(session: Session, old_username: str, new_username: str) -> User:
+
+    existing_user = session.scalar(select(User).where(User.username == old_username))
+
+    if not existing_user:
+        raise ValueError("User does not exist")
+
+    existing_user.username = new_username
+
+    session.commit()
+
+    return existing_user
