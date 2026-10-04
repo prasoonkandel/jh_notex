@@ -5,8 +5,6 @@ from database.connection import engine
 from models.note import Note
 from models.user import User
 
-session = Session(engine)
-
 
 def user_exists(session: Session, username: str) -> bool:
     exists = session.scalar(select(User).where(User.username == username))

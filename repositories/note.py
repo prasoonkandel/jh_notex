@@ -1,15 +1,12 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from database.connection import engine
 from models.note import Note
 from models.user import User
 from repositories.user import user_exists
 
-session = Session(engine)
 
-
-def create_note(user: User, title: str, content: str) -> Note:
+def create_note(session: Session, user: User, title: str, content: str) -> Note:
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
     note = Note(user_id=user.id, title=title, content=content)
@@ -22,7 +19,7 @@ def create_note(user: User, title: str, content: str) -> Note:
         raise
 
 
-def get_note(user: User, note_id: int) -> Note:
+def get_note(session: Session, user: User, note_id: int) -> Note:
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
 
@@ -39,7 +36,7 @@ def get_note(user: User, note_id: int) -> Note:
     return note
 
 
-def get_notes(user: User) -> list[Note]:
+def get_notes(session: Session, user: User) -> list[Note]:
 
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
@@ -49,7 +46,7 @@ def get_notes(user: User) -> list[Note]:
     return notes
 
 
-def delete_note(user: User, note_id: int) -> None:
+def delete_note(session: Session, user: User, note_id: int) -> None:
 
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
@@ -70,7 +67,7 @@ def delete_note(user: User, note_id: int) -> None:
         raise
 
 
-def get_titles_with_id(user: User) -> list[tuple[int, str]]:
+def get_titles_with_id(session: Session, user: User) -> list[tuple[int, str]]:
 
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
@@ -82,7 +79,9 @@ def get_titles_with_id(user: User) -> list[tuple[int, str]]:
     return title_id_pairs
 
 
-def write_note(user: User, note_id: int, title: str, content: str) -> Note:
+def write_note(
+    session: Session, user: User, note_id: int, title: str, content: str
+) -> Note:
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
 
