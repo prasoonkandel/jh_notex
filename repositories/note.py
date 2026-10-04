@@ -71,3 +71,15 @@ def get_notes_titles(user: User) -> list[str]:
 
     titles = session.scalars(select(Note.title).where(Note.user_id == user.id)).all()
     return titles
+
+
+def write_note(user: User, title: str, content: str) -> Note:
+
+    if not user_exists(session, user.username):
+        raise ValueError("User does not exist")
+
+    note = Note(user_id=user.id, title=title, content=content)
+    session.add(note)
+    session.commit()
+
+    return note
