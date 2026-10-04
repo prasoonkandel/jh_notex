@@ -23,3 +23,13 @@ def create_user(session: Session, username: str, password_hash: str) -> User:
         raise
 
     return user
+
+
+def delete_user(session: Session, username: str, password_hash: str) -> User:
+    existing_user = session.scalar(select(User).where(User.username == username))
+    if not existing_user:
+        raise ValueError("User does not exist")
+
+    session.delete(existing_user)
+    session.commit()
+    return existing_user
