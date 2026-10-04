@@ -1,5 +1,3 @@
-from turtle import title
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -72,22 +70,14 @@ def get_titles_with_id(user: User) -> list[tuple[int, str]]:
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
 
-    id_list = session.scalars(select(Note.id).where(Note.user_id == user.id)).all()
-
-    titles = session.scalars(select(Note.title).where(Note.user_id == user.id)).all()
-
-    title_id_pairs = []
-
-    if not titles or not id_list:
-        raise ValueError("No titles found")
-
-    for id, title in zip(id_list, titles):
-        title_id_pairs.append((id, title))
+    title_id_pairs = session.execute(
+        select(Note.id, Note.title).where(Note.user_id == user.id)
+    ).all()
 
     if not title_id_pairs:
-        raise ValueError("Failed to retrieve titles with id")
+        raise ValueError("No titles found")
 
-    return titles_id_pairs
+    return title_id_pairs
 
 
 def write_note(user: User, note_id: int, title: str, content: str) -> Note:
