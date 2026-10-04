@@ -1,3 +1,5 @@
+from turtle import title
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -23,7 +25,10 @@ def get_note(user: User, note_id: int) -> Note:
         raise ValueError("User does not exist")
 
     note = session.scalar(
-        select(Note).where(Note.id == note_id and Note.user_id == user.id)
+        select(Note).where(
+            Note.id == note_id,
+            Note.user_id == user.id,
+        )
     )
 
     if note is None:
@@ -67,14 +72,22 @@ def get_titles_with_id(user: User) -> list[tuple[int, str]]:
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
 
-    titles = session.scalars(
-        select(Note.id, Note.title).where(Note.user_id == user.id)
-    ).all()
+    id_list = session.scalars(select(Note.id).where(Note.user_id == user.id)).all()
 
-    if not titles:
+    titles = session.scalars(select(Note.title).where(Note.user_id == user.id)).all()
+
+    title_id_pairs = []
+
+    if not titles or not id_list:
         raise ValueError("No titles found")
 
-    return titles
+    for id, title in zip(id_list, titles):
+        title_id_pairs.append((id, title))
+
+    if not title_id_pairs:
+        raise ValueError("Failed to retrieve titles with id")
+
+    return titles_id_pairs
 
 
 def write_note(user: User, note_id: int, title: str, content: str) -> Note:
@@ -82,6 +95,9 @@ def write_note(user: User, note_id: int, title: str, content: str) -> Note:
         raise ValueError("User does not exist")
 
     note = session.scalar(select(Note).where(Note.id == note_id))
+
+    if not note:
+        raise ValueError("Note does not exist")
 
     if note.user_id != user.id:
         raise ValueError("Note does not belong to user")
