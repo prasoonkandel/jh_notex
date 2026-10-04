@@ -46,9 +46,6 @@ def get_notes(user: User) -> list[Note]:
 
     notes = session.scalars(select(Note).where(Note.user_id == user.id)).all()
 
-    if not notes:
-        raise ValueError("No notes found")
-
     return notes
 
 
@@ -81,9 +78,6 @@ def get_titles_with_id(user: User) -> list[tuple[int, str]]:
     title_id_pairs = session.execute(
         select(Note.id, Note.title).where(Note.user_id == user.id)
     ).all()
-
-    if not title_id_pairs:
-        raise ValueError("No titles found")
 
     return title_id_pairs
 
