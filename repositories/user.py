@@ -46,9 +46,13 @@ def delete_user(session: Session, username: str, password_hash: str) -> User:
     if not existing_user:
         raise ValueError("User does not exist")
 
-    session.delete(existing_user)
-    session.commit()
-    return existing_user
+    try:
+        session.delete(existing_user)
+        session.commit()
+        return existing_user
+    except:
+        session.rollback()
+        raise
 
 
 def change_password(
@@ -66,9 +70,12 @@ def change_password(
 
     existing_user.password_hash = new_password_hash
 
-    session.commit()
-
-    return existing_user
+    try:
+        session.commit()
+        return existing_user
+    except:
+        session.rollback()
+        raise
 
 
 def change_username(session: Session, old_username: str, new_username: str) -> User:
@@ -80,6 +87,9 @@ def change_username(session: Session, old_username: str, new_username: str) -> U
 
     existing_user.username = new_username
 
-    session.commit()
-
-    return existing_user
+    try:
+        session.commit()
+        return existing_user
+    except:
+        session.rollback()
+        raise

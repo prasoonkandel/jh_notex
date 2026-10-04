@@ -13,9 +13,13 @@ def create_note(user: User, title: str, content: str) -> Note:
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
     note = Note(user_id=user.id, title=title, content=content)
-    session.add(note)
-    session.commit()
-    return note
+    try:
+        session.add(note)
+        session.commit()
+        return note
+    except:
+        session.rollback()
+        raise
 
 
 def get_note(user: User, note_id: int) -> Note:
@@ -61,8 +65,12 @@ def delete_note(user: User, note_id: int) -> None:
     if note.user_id != user.id:
         raise ValueError("Note does not belong to user")
 
-    session.delete(note)
-    session.commit()
+    try:
+        session.delete(note)
+        session.commit()
+    except:
+        session.rollback()
+        raise
 
 
 def get_titles_with_id(user: User) -> list[tuple[int, str]]:
@@ -94,5 +102,9 @@ def write_note(user: User, note_id: int, title: str, content: str) -> Note:
 
     note.title = title
     note.content = content
-    session.commit()
-    return note
+    try:
+        session.commit()
+        return note
+    except:
+        session.rollback()
+        raise
