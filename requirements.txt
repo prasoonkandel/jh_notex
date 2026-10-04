@@ -8,3 +8,6 @@ pydantic[email]
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
+pwdlib[argon2]
+PyJWT
+python-multipart
