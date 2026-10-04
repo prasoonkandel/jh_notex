@@ -43,3 +43,20 @@ def get_all_notes(user: User) -> list[Note]:
         raise ValueError("No notes found")
 
     return notes
+
+
+def delete_note(user: User, note_id: int) -> None:
+
+    if not user_exists(session, user.username):
+        raise ValueError("User does not exist")
+
+    note = session.scalars(select(Note).where(Note.id == note_id))
+
+    if not note:
+        raise ValueError("Note does not exist")
+
+    if note.user_id != user.id:
+        raise ValueError("Note does not belong to user")
+
+    session.delete(note)
+    session.commit()
