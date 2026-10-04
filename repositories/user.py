@@ -47,7 +47,7 @@ def create_user(session: Session, username: str, password_hash: str) -> User:
     return user
 
 
-def delete_user(session: Session, username: str, password_hash: str) -> User:
+def delete_user(session: Session, username: str) -> User:
     existing_user = session.scalar(select(User).where(User.username == username))
     if not existing_user:
         raise ValueError("User does not exist")
@@ -67,9 +67,6 @@ def change_password(
     existing_user = session.scalar(select(User).where(User.username == username))
     if not existing_user:
         raise ValueError("User does not exist")
-
-    if existing_user.password_hash != old_password_hash:
-        raise ValueError("Old password is incorrect")
 
     if old_password_hash == new_password_hash:
         raise ValueError("New password cannot be the same as the old password")
