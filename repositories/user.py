@@ -40,3 +40,23 @@ def delete_user(session: Session, username: str, password_hash: str) -> User:
     session.delete(existing_user)
     session.commit()
     return existing_user
+
+
+def change_password(
+    session: Session, username: str, new_password_hash: str, old_password_hash: str
+) -> User:
+    existing_user = session.scalar(select(User).where(User.username == username))
+    if not existing_user:
+        raise ValueError("User does not exist")
+
+    if existing_user.password_hash != old_password_hash:
+        raise ValueError("Old password is incorrect")
+
+    if old_password_hash == new_password_hash:
+        raise ValueError("New password cannot be the same as the old password")
+
+    existing_user.password_hash = new_password_hash
+
+    session.commit()
+
+    return existing_user
