@@ -1,3 +1,5 @@
+from posixpath import exists
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -33,3 +35,10 @@ def delete_user(session: Session, username: str, password_hash: str) -> User:
     session.delete(existing_user)
     session.commit()
     return existing_user
+
+
+def user_exists(session: Session, username: str) -> bool:
+    exists = session.scalar(select(User).where(User.username == username))
+    if not exists:
+        return False
+    return True
