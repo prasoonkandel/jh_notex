@@ -8,6 +8,13 @@ from models.user import User
 session = Session(engine)
 
 
+def user_exists(session: Session, username: str) -> bool:
+    exists = session.scalar(select(User).where(User.username == username))
+    if not exists:
+        return False
+    return True
+
+
 def create_user(session: Session, username: str, password_hash: str) -> User:
     existing_user = session.scalar(select(User).where(User.username == username))
 
@@ -33,10 +40,3 @@ def delete_user(session: Session, username: str, password_hash: str) -> User:
     session.delete(existing_user)
     session.commit()
     return existing_user
-
-
-def user_exists(session: Session, username: str) -> bool:
-    exists = session.scalar(select(User).where(User.username == username))
-    if not exists:
-        return False
-    return True
