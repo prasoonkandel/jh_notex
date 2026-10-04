@@ -30,3 +30,16 @@ def get_note(user: User, note_id: int) -> Note:
         raise ValueError("Note does not belong to user")
 
     return note
+
+
+def get_all_notes(user: User) -> list[Note]:
+
+    if not user_exists(session, user.username):
+        raise ValueError("User does not exist")
+
+    notes = session.scalars(select(Note).where(Note.user_id == user.id)).all()
+
+    if not notes:
+        raise ValueError("No notes found")
+
+    return notes
