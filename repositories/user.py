@@ -24,6 +24,15 @@ def get_user(session: Session, username: str) -> User:
     return existing_user
 
 
+def get_user_by_id(session: Session, user_id: int) -> User:
+    user = session.get(User, user_id)
+
+    if not user:
+        raise ValueError("User does not exist")
+
+    return user
+
+
 def create_user(session: Session, username: str, password_hash: str) -> User:
     existing_user = session.scalar(select(User).where(User.username == username))
 
