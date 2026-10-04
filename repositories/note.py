@@ -62,3 +62,12 @@ def delete_note(user: User, note_id: int) -> None:
 
     session.delete(note)
     session.commit()
+
+
+def get_notes_titles(user: User) -> list[str]:
+
+    if not user_exists(session, user.username):
+        raise ValueError("User does not exist")
+
+    titles = session.scalars(select(Note.title).where(Note.user_id == user.id)).all()
+    return titles
