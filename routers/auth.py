@@ -13,7 +13,7 @@ from schemas.auth import RegisterRequest, TokenResponse
 router = APIRouter()
 
 
-@router.post("/auth/register")
+@router.post("/auth/register", response_model=TokenResponse)
 def register(request: RegisterRequest, db: SessionDep):
     try:
         user = create_user(db, request.username, hash_password(request.password))
