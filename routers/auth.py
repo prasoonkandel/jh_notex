@@ -7,8 +7,8 @@ from core.security import (
     verify_password,
 )
 from database.dependency import SessionDep
-from repositories.user import create_user
-from schemas.auth import RegisterRequest, TokenResponse
+from repositories.user import create_user, get_user
+from schemas.auth import LoginRequest, RegisterRequest, TokenResponse
 
 router = APIRouter()
 
@@ -25,4 +25,20 @@ def register(request: RegisterRequest, db: SessionDep):
         )
 
     access_token = create_access_token(user.id)
+    return TokenResponse(access_token=access_token)
+
+
+@router.post("/auth/login", response_model=TokenResponse)
+def login(request: LoginRequest, db: SessionDep):
+
+    user = get_user(db, request.username)
+
+    if not user or not verify_password(request.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Username or password is incorrect",
+        )
+
+    access_token = create_access_token(user.id)
+
     return TokenResponse(access_token=access_token)
