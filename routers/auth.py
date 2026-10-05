@@ -10,10 +10,13 @@ from database.dependency import SessionDep
 from repositories.user import create_user, get_user
 from schemas.auth import LoginRequest, RegisterRequest, TokenResponse
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/auth",
+    tags=["Authentication"],
+)
 
 
-@router.post("/auth/register", response_model=TokenResponse)
+@router.post("/register", response_model=TokenResponse)
 def register(request: RegisterRequest, db: SessionDep):
     try:
         user = create_user(db, request.username, hash_password(request.password))
@@ -28,7 +31,7 @@ def register(request: RegisterRequest, db: SessionDep):
     return TokenResponse(access_token=access_token)
 
 
-@router.post("/auth/login", response_model=TokenResponse)
+@router.post("/login", response_model=TokenResponse)
 def login(request: LoginRequest, db: SessionDep):
 
     user = get_user(db, request.username)
