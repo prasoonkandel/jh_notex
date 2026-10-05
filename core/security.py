@@ -54,15 +54,19 @@ def create_access_token(user_id: int) -> str:
 
 
 def decode_access_token(token: str) -> int:
-    payload = jwt.decode(
-        token,
-        JWT_SECRET_KEY,
-        algorithms=[ALGORITHM],
-    )
+    try:
+        payload = jwt.decode(
+            token,
+            JWT_SECRET_KEY,
+            algorithms=[ALGORITHM],
+        )
 
-    user_id = payload.get("sub")
+        user_id = payload.get("sub")
 
-    if user_id is None:
+        if user_id is None:
+            raise InvalidTokenError("Missing subject")
+
+        return int(user_id)
+
+    except (InvalidTokenError, ValueError):
         raise InvalidTokenError("Invalid token")
-
-    return int(user_id)
