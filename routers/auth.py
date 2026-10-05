@@ -8,7 +8,7 @@ from core.security import (
 )
 from database.dependency import SessionDep
 from repositories.user import create_user, get_user
-from schemas.auth import LoginRequest, RegisterRequest, TokenResponse
+from schemas.auth import LoginRequest, RegisterRequest, TokenResponse, User
 
 router = APIRouter(
     prefix="/auth",
@@ -45,3 +45,16 @@ def login(request: LoginRequest, db: SessionDep):
     access_token = create_access_token(user.id)
 
     return TokenResponse(access_token=access_token)
+
+
+@router.post("/me", response_model=User)
+def get_user(db: SessionDep, token: str):
+    user_id = decode_access_token(token)
+    user = get_user(db, user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    return User(id=user.id, username=user.username)
