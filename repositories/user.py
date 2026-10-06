@@ -12,21 +12,20 @@ def user_exists(session: Session, username: str) -> bool:
     return True
 
 
-def get_user(session: Session, username: str) -> User:
+def get_user(session: Session, username: str) -> User | None:
     existing_user = session.scalar(select(User).where(User.username == username))
 
     if not existing_user:
-        raise ValueError("User does not exist")
+        return None
 
     return existing_user
 
 
-def get_user_by_id(session: Session, user_id: int) -> User:
+def get_user_by_id(session: Session, user_id: int) -> User | None:
     user = session.get(User, user_id)
 
     if not user:
         raise ValueError("User does not exist")
-
     return user
 
 
