@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials
 
 from core.security import (
     create_access_token,
@@ -7,6 +8,7 @@ from core.security import (
     verify_password,
 )
 from database.dependency import SessionDep
+from dependencies.auth import get_current_user
 from repositories.user import create_user, get_user
 from schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserResponse
 
@@ -48,13 +50,6 @@ def login(request: LoginRequest, db: SessionDep):
 
 
 @router.post("/me", response_model=UserResponse)
-def get_user(db: SessionDep, token: str):
-    user_id = decode_access_token(token)
-    user = get_user(db, user_id)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
-        )
-
-    return UserResponse(id=user.id, username=user.username)
+def get_me(credentials: HTTPAuthorizationCredentials, db: SessionDep):
+    current_user = get_current_user(session=db, credentials=credentials)
+    return UserResponse(id=current_user.id, username=current_user.username)
