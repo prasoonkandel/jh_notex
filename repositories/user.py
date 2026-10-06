@@ -25,7 +25,7 @@ def get_user_by_id(session: Session, user_id: int) -> User | None:
     user = session.get(User, user_id)
 
     if not user:
-        raise ValueError("User does not exist")
+        return None
     return user
 
 
