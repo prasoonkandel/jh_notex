@@ -5,3 +5,5 @@
 /repositories/__pycache__
 /schemas/__pycache__
 /core/__pycache__
+/__pycache__
+/routers/__pycache__
