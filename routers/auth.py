@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
 
@@ -50,6 +52,12 @@ def login(request: LoginRequest, db: SessionDep):
 
 
 @router.post("/me", response_model=UserResponse)
-def get_me(credentials: HTTPAuthorizationCredentials, db: SessionDep):
+def get_me(
+    credentials: Annotated[
+        HTTPAuthorizationCredentials,
+        Depends(security),
+    ],
+    db: SessionDep,
+):
     current_user = get_current_user(session=db, credentials=credentials)
     return UserResponse(id=current_user.id, username=current_user.username)
