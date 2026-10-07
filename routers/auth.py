@@ -1,7 +1,7 @@
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from core.security import (
     create_access_token,
@@ -18,6 +18,8 @@ router = APIRouter(
     prefix="/auth",
     tags=["Authentication"],
 )
+
+security = HTTPBearer()
 
 
 @router.post("/register", response_model=TokenResponse)
