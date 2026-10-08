@@ -15,7 +15,7 @@ from repositories.user import create_user, get_user
 from schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserResponse
 
 router = APIRouter(
-    prefix="/auth",
+    prefix="/api/auth",
     tags=["Authentication"],
 )
 
@@ -51,15 +51,3 @@ def login(request: LoginRequest, db: SessionDep):
     access_token = create_access_token(user.id)
 
     return TokenResponse(access_token=access_token)
-
-
-@router.post("/me", response_model=UserResponse)
-def get_me(
-    credentials: Annotated[
-        HTTPAuthorizationCredentials,
-        Depends(security),
-    ],
-    db: SessionDep,
-):
-    current_user = get_current_user(session=db, credentials=credentials)
-    return UserResponse(id=current_user.id, username=current_user.username)
