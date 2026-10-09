@@ -27,7 +27,7 @@ BEARER = Annotated[
 ]
 
 
-@router.post("/me", response_model=UserResponse)
+@router.get("/me", response_model=UserResponse)
 def get_me(
     credentials: BEARER,
     db: SessionDep,
