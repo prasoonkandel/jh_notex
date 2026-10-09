@@ -12,6 +12,7 @@ from core.security import (
 )
 from database.dependency import SessionDep
 from dependencies.auth import get_current_user, security
+from models.user import User
 from repositories.user import create_user, get_user
 from schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserResponse
 
@@ -29,8 +30,6 @@ BEARER = Annotated[
 
 @router.get("/me", response_model=UserResponse)
 def get_me(
-    credentials: BEARER,
-    db: SessionDep,
+    current_user: Annotated[User, Depends(get_current_user)],
 ):
-    current_user = get_current_user(session=db, credentials=credentials)
     return UserResponse(id=current_user.id, username=current_user.username)
