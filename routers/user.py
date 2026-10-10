@@ -70,7 +70,7 @@ def password(
         )
 
 
-@router.patch("/change-username")
+@router.patch("/username")
 def username(
     request: ChangeUsernameRequest,
     current_user: Annotated[User, Depends(get_current_user)],
@@ -85,3 +85,5 @@ def username(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(e),
         )
+
+@router.delete("/delete")
