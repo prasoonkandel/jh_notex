@@ -12,7 +12,7 @@ def create_note(session: Session, user: User, title: str, content: str) -> Note:
         session.add(note)
         session.commit()
         return note
-    except:
+    except Exception:
         session.rollback()
         raise
 
@@ -48,7 +48,7 @@ def delete_note(session: Session, user: User, note_id: int) -> None:
     try:
         session.execute(delete(Note).where(Note.id == note_id, Note.user_id == user.id))
         session.commit()
-    except:
+    except Exception:
         session.rollback()
         raise
 
@@ -58,7 +58,7 @@ def delete_notes(session: Session, user: User) -> None:
     try:
         session.execute(delete(Note).where(Note.user_id == user.id))
         session.commit()
-    except:
+    except Exception:
         session.rollback()
         raise
 
@@ -95,6 +95,6 @@ def write_note(
     try:
         session.commit()
         return note
-    except:
+    except Exception:
         session.rollback()
         raise
