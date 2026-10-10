@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from models.note import Note
@@ -49,14 +49,18 @@ def get_notes(session: Session, user: User) -> list[Note]:
 
 def delete_note(session: Session, user: User, note_id: int) -> None:
 
-    note = session.scalar(
-        select(Note).where(Note.id == note_id, Note.user_id == user.id)
-    )
-
-    if note is None:
-        raise ValueError("Note does not exist")
     try:
-        session.delete(note)
+        session.execute(delete(Note).where(Note.id == note_id, Note.user_id == user.id))
+        session.commit()
+    except:
+        session.rollback()
+        raise
+
+
+def delete_notes(session: Session, user: User) -> None:
+
+    try:
+        session.execute(delete(Note).where(Note.user_id == user.id))
         session.commit()
     except:
         session.rollback()
