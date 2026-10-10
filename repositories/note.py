@@ -44,10 +44,11 @@ def delete_note(session: Session, user: User, note_id: int) -> None:
 
     try:
         result = cast(
-            CursorResult[Any], 
+            CursorResult[Any],
             session.execute(
-            delete(Note).where(Note.id == note_id, Note.user_id == user.id)
-        ))
+                delete(Note).where(Note.id == note_id, Note.user_id == user.id)
+            ),
+        )
 
         if result.rowcount == 0:
             raise ValueError("Note does not exist")
@@ -58,10 +59,16 @@ def delete_note(session: Session, user: User, note_id: int) -> None:
         raise
 
 
-def delete_notes(session: Session, user: User) -> None:
+def delete_notes(session: Session, user: User) -> int:
     try:
-        session.execute(delete(Note).where(Note.user_id == user.id))
+        result = cast(
+            CursorResult[Any],
+            session.execute(delete(Note).where(Note.user_id == user.id)),
+        )
+
+        count = result.rowcount
         session.commit()
+        return count
     except Exception:
         session.rollback()
         raise
