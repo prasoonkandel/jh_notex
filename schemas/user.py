@@ -13,5 +13,4 @@ class ChangePasswordRequest(BaseModel):
 
 
 class ChangeUsernameRequest(BaseModel):
-    old_username: str
     new_username: str
