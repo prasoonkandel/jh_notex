@@ -1,3 +1,4 @@
+from multiprocessing import Value
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -86,6 +87,28 @@ def username(
     try:
         change_username(session, current_user.username, request.new_username)
         return {"message": "Username Changed Succesfully"}
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e),
+        )
+
+
+@router.delete("/delete")
+def delete(
+    request: DeleteUserRequest,
+    current_user: CURRENT_USER,
+    session: SessionDep,
+):
+    if not verify_password(request.password, current_user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str("Incorrect Password")
+        )
+
+    try:
+        delete_user(session, current_user.username)
+        return {"message": "User Deleted Succesfully"}
 
     except ValueError as e:
         raise HTTPException(
