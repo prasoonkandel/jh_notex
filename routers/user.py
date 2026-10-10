@@ -14,7 +14,7 @@ from database.dependency import SessionDep
 from dependencies.auth import get_current_user, security
 from models.user import User
 from repositories.user import create_user, get_user
-from schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserResponse
+from schemas.user import UserResponse
 
 router = APIRouter(
     prefix="/api/user",

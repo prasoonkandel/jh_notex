@@ -12,7 +12,7 @@ from core.security import (
 from database.dependency import SessionDep
 from dependencies.auth import get_current_user
 from repositories.user import create_user, get_user
-from schemas.auth import LoginRequest, RegisterRequest, TokenResponse, UserResponse
+from schemas.auth import LoginRequest, RegisterRequest, TokenResponse
 
 router = APIRouter(
     prefix="/api/auth",
