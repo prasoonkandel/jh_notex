@@ -36,7 +36,7 @@ def get_me(
     return UserResponse(id=current_user.id, username=current_user.username)
 
 
-@router.post("/password")
+@router.patch("/password")
 def password(
     request: ChangePasswordRequest,
     current_user: Annotated[User, Depends(get_current_user)],
@@ -70,7 +70,7 @@ def password(
         )
 
 
-@router.post("/change-username")
+@router.patch("/change-username")
 def username(
     request: ChangeUsernameRequest,
     current_user: Annotated[User, Depends(get_current_user)],
