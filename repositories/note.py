@@ -1,4 +1,7 @@
+from typing import Any, cast
+
 from sqlalchemy import delete, select
+from sqlalchemy.engine import CursorResult
 from sqlalchemy.orm import Session
 
 from models.note import Note
@@ -40,7 +43,15 @@ def get_notes(session: Session, user: User) -> list[Note]:
 def delete_note(session: Session, user: User, note_id: int) -> None:
 
     try:
-        session.execute(delete(Note).where(Note.id == note_id, Note.user_id == user.id))
+        result = cast(
+            CursorResult[Any], 
+            session.execute(
+            delete(Note).where(Note.id == note_id, Note.user_id == user.id)
+        ))
+
+        if result.rowcount == 0:
+            raise ValueError("Note does not exist")
+
         session.commit()
     except Exception:
         session.rollback()
