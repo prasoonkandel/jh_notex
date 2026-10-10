@@ -34,13 +34,7 @@ def get_note(session: Session, user: User, note_id: int) -> Note:
 
 def get_notes(session: Session, user: User) -> list[Note]:
     notes = session.scalars(select(Note).where(Note.user_id == user.id)).all()
-
-    notes_list = []
-
-    for note in notes:
-        notes_list.append(note)
-
-    return notes_list
+    return list(notes)
 
 
 def delete_note(session: Session, user: User, note_id: int) -> None:
@@ -54,7 +48,6 @@ def delete_note(session: Session, user: User, note_id: int) -> None:
 
 
 def delete_notes(session: Session, user: User) -> None:
-
     try:
         session.execute(delete(Note).where(Note.user_id == user.id))
         session.commit()
