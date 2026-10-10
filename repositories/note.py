@@ -3,13 +3,9 @@ from sqlalchemy.orm import Session
 
 from models.note import Note
 from models.user import User
-from repositories.user import user_exists
 
 
 def create_note(session: Session, user: User, title: str, content: str) -> Note:
-
-    if not user_exists(session, user.username):
-        raise ValueError("User does not exist")
 
     note = Note(user_id=user.id, title=title, content=content)
     try:
@@ -83,8 +79,6 @@ def get_titles_with_id(session: Session, user: User) -> list[tuple[int, str]]:
 def write_note(
     session: Session, user: User, note_id: int, title: str, content: str
 ) -> Note:
-    if not user_exists(session, user.username):
-        raise ValueError("User does not exist")
 
     note = session.scalar(
         select(Note).where(
