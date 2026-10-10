@@ -43,7 +43,12 @@ def get_notes(session: Session, user: User) -> list[Note]:
 
     notes = session.scalars(select(Note).where(Note.user_id == user.id)).all()
 
-    return notes
+    notes_list = []
+
+    for note in notes:
+        notes_list.append(note)
+
+    return notes_list
 
 
 def delete_note(session: Session, user: User, note_id: int) -> None:
@@ -51,14 +56,12 @@ def delete_note(session: Session, user: User, note_id: int) -> None:
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
 
-    note = session.scalar(select(Note).where(Note.id == note_id))
+    note = session.scalar(
+        select(Note).where(Note.id == note_id, Note.user_id == user.id)
+    )
 
     if note is None:
         raise ValueError("Note does not exist")
-
-    if note.user_id != user.id:
-        raise ValueError("Note does not belong to user")
-
     try:
         session.delete(note)
         session.commit()
@@ -72,11 +75,15 @@ def get_titles_with_id(session: Session, user: User) -> list[tuple[int, str]]:
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
 
-    title_id_pairs = session.execute(
+    titles_with_id = session.execute(
         select(Note.id, Note.title).where(Note.user_id == user.id)
     ).all()
 
-    return title_id_pairs
+    title_id_tuples = []
+    for note_id, title in titles_with_id:
+        title_id_tuples.append((note_id, title))
+
+    return title_id_tuples
 
 
 def write_note(
@@ -85,13 +92,15 @@ def write_note(
     if not user_exists(session, user.username):
         raise ValueError("User does not exist")
 
-    note = session.scalar(select(Note).where(Note.id == note_id))
+    note = session.scalar(
+        select(Note).where(
+            Note.id == note_id,
+            Note.user_id == user.id,
+        )
+    )
 
     if not note:
         raise ValueError("Note does not exist")
-
-    if note.user_id != user.id:
-        raise ValueError("Note does not belong to user")
 
     note.title = title
     note.content = content
