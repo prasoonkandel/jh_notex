@@ -14,8 +14,13 @@ from core.security import (
 from database.dependency import SessionDep
 from dependencies.auth import get_current_user, security
 from models.user import User
-from repositories.user import change_password, change_username
-from schemas.user import ChangePasswordRequest, ChangeUsernameRequest, UserResponse
+from repositories.user import change_password, change_username, delete_user
+from schemas.user import (
+    ChangePasswordRequest,
+    ChangeUsernameRequest,
+    DeleteUserRequest,
+    UserResponse,
+)
 
 router = APIRouter(
     prefix="/api/user",
@@ -28,10 +33,12 @@ BEARER = Annotated[
     Depends(security),
 ]
 
+CURRENT_USER = Annotated[User, Depends(get_current_user)]
+
 
 @router.get("/me", response_model=UserResponse)
 def get_me(
-    current_user: Annotated[User, Depends(get_current_user)],
+    current_user: CURRENT_USER,
 ):
     return UserResponse(id=current_user.id, username=current_user.username)
 
@@ -39,7 +46,7 @@ def get_me(
 @router.patch("/password")
 def password(
     request: ChangePasswordRequest,
-    current_user: Annotated[User, Depends(get_current_user)],
+    current_user: CURRENT_USER,
     session: SessionDep,
 ):
     if not verify_password(request.old_password, current_user.password_hash):
@@ -73,7 +80,7 @@ def password(
 @router.patch("/username")
 def username(
     request: ChangeUsernameRequest,
-    current_user: Annotated[User, Depends(get_current_user)],
+    current_user: CURRENT_USER,
     session: SessionDep,
 ):
     try:
@@ -85,5 +92,3 @@ def username(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(e),
         )
-
-@router.delete("/delete")
