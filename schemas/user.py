@@ -10,3 +10,8 @@ class UserResponse(BaseModel):
 class ChangePasswordRequest(BaseModel):
     old_password: str
     new_password: str
+
+
+class ChangeUsernameRequest(BaseModel):
+    old_username: str
+    new_username: str
