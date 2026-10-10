@@ -14,8 +14,8 @@ from core.security import (
 from database.dependency import SessionDep
 from dependencies.auth import get_current_user, security
 from models.user import User
-from repositories.user import change_password
-from schemas.user import ChangePasswordRequest, UserResponse
+from repositories.user import change_password, change_username
+from schemas.user import ChangePasswordRequest, ChangeUsernameRequest, UserResponse
 
 router = APIRouter(
     prefix="/api/user",
@@ -62,6 +62,23 @@ def password(
         )
 
         return {"message": "Password Changed Succesfully"}
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e),
+        )
+
+
+@router.post("/change-username")
+def username(
+    request: ChangeUsernameRequest,
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: SessionDep,
+):
+    try:
+        change_username(session, current_user.username, request.new_username)
+        return {"message": "Username Changed Succesfully"}
 
     except ValueError as e:
         raise HTTPException(
