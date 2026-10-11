@@ -7,7 +7,7 @@ from starlette.status import HTTP_409_CONFLICT
 from database.dependency import SessionDep
 from dependencies.auth import get_current_user, security
 from models.user import User
-from repositories.note import create_note
+from repositories.note import create_note, write_content
 from schemas.note import (
     ChangeTitleRequest,
     CreateNoteRequest,
@@ -37,5 +37,16 @@ def create(
     try:
         note = create_note(session, current_user, request.title)
         return NoteResponse(id=note.id, title=note.title, content=note.content)
+    except ValueError as e:
+        raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
+
+
+@router.post("/write")
+def write(
+    request: WriteContentRequest, current_user: CURRENT_USER, session: SessionDep
+):
+    try:
+        write_content(session, current_user, request.id, request.content)
+        return {"message": "Note written and saved sucessfully!"}
     except ValueError as e:
         raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
