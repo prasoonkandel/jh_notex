@@ -9,10 +9,7 @@ from pwdlib import PasswordHash
 load_dotenv()
 
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-
-if JWT_SECRET_KEY is None:
-    raise RuntimeError("JWT_SECRET_KEY is not configured")
+JWT_SECRET_KEY: str = os.environ["JWT_SECRET_KEY"]
 
 
 ALGORITHM = "HS256"
