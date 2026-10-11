@@ -20,5 +20,9 @@ class WriteContentRequest(BaseModel):
     content: str
 
 
+class ChangeTitleRequest(BaseModel):
+    title: str
+
+
 class DeleteNoteRequest(BaseModel):
     id: int
