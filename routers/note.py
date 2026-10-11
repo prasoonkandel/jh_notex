@@ -20,3 +20,7 @@ router = APIRouter(
     prefix="/api/note",
     tags=["Note Operations"],
 )
+
+BEARER = Annotated[HTTPAuthorizationCredentials, Depends(security)]
+
+CURRENT_USER = Annotated[User, Depends(get_current_user)]
