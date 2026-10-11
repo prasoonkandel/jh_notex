@@ -17,10 +17,12 @@ class CreateNoteRequest(BaseModel):
 
 
 class WriteContentRequest(BaseModel):
+    id: int
     content: str
 
 
 class ChangeTitleRequest(BaseModel):
+    id: int
     title: str
 
 
