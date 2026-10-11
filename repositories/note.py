@@ -98,7 +98,9 @@ def write_content(session: Session, user: User, note_id: int, content: str) -> N
 
     if not note:
         raise ValueError("Note does not exist")
+
     note.content = content
+
     try:
         session.commit()
         return note
