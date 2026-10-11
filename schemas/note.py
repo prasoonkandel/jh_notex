@@ -14,4 +14,7 @@ class NoteResponse(BaseModel):
 
 class CreateNoteRequest(BaseModel):
     title: str
-    
+
+
+class DeleteNoteRequest(BaseModel):
+    id: int
