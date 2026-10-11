@@ -20,7 +20,3 @@ class UpdateNoteRequest(BaseModel):
     id: int
     title: str
     content: str | None = None
-
-
-class DeleteNoteRequest(BaseModel):
-    id: int
