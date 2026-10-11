@@ -105,3 +105,25 @@ def write_content(session: Session, user: User, note_id: int, content: str) -> N
     except Exception:
         session.rollback()
         raise
+
+
+def change_title(session: Session, user: User, note_id: int, title: str) -> Note:
+    note = session.scalar(
+        select(Note).where(
+            Note.id == note_id,
+            Note.user_id == user.id,
+        )
+    )
+
+    if not note:
+        raise ValueError("Note does not exist")
+
+    note.title = title
+
+    try:
+        session.commit()
+        return note
+
+    except Exception as e:
+        session.rollback()
+        raise
