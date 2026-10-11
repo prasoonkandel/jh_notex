@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
+from starlette.status import HTTP_400_BAD_REQUEST
 
 from core.security import (
     hash_password,
@@ -13,9 +14,9 @@ from dependencies.auth import get_current_user, security
 from models.user import User
 from repositories.user import change_password, change_username, delete_user
 from schemas.user import (
-    ChangePasswordRequest,
-    ChangeUsernameRequest,
     DeleteUserRequest,
+    UpdatePasswordRequest,
+    UpdateUserRequest,
     UserResponse,
 )
 
@@ -42,7 +43,7 @@ def get_me(
 
 @router.patch("/password")
 def password(
-    request: ChangePasswordRequest,
+    request: UpdatePasswordRequest,
     current_user: CURRENT_USER,
     session: SessionDep,
 ):
@@ -74,21 +75,31 @@ def password(
         )
 
 
-@router.patch("/username")
+@router.patch("/me")
 def username(
-    request: ChangeUsernameRequest,
+    request: UpdateUserRequest,
     current_user: CURRENT_USER,
     session: SessionDep,
 ):
-    try:
-        change_username(session, current_user.username, request.new_username)
-        return {"message": "Username Changed Succesfully"}
+    username_update = bool(request.new_username)
 
-    except ValueError as e:
+    if not username_update:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(e),
+            status_code=HTTP_400_BAD_REQUEST, detail="No Updation Information Provided"
         )
+
+    if username_update:
+        assert request.new_username is not None
+        try:
+            change_username(session, current_user.username, request.new_username)
+
+        except ValueError as e:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=str(e),
+            )
+
+    return {"message": "User Information Updated!"}
 
 
 @router.delete("/delete")
