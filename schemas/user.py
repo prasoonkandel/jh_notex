@@ -7,13 +7,10 @@ class UserResponse(BaseModel):
     username: str
 
 
-class ChangePasswordRequest(BaseModel):
-    old_password: str
-    new_password: str
-
-
-class ChangeUsernameRequest(BaseModel):
-    new_username: str
+class UpdateUserRequest(BaseModel):
+    old_password: str | None = None
+    new_password: str | None = None
+    new_username: str | None = None
 
 
 class DeleteUserRequest(BaseModel):
