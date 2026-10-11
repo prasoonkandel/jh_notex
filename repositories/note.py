@@ -8,9 +8,9 @@ from models.note import Note
 from models.user import User
 
 
-def create_note(session: Session, user: User, title: str, content: str) -> Note:
+def create_note(session: Session, user: User, title: str) -> Note:
 
-    note = Note(user_id=user.id, title=title, content=content)
+    note = Note(user_id=user.id, title=title)
     try:
         session.add(note)
         session.commit()
@@ -87,9 +87,7 @@ def get_titles_with_id(session: Session, user: User) -> list[tuple[int, str]]:
     return title_id_tuples
 
 
-def write_note(
-    session: Session, user: User, note_id: int, title: str, content: str
-) -> Note:
+def write_content(session: Session, user: User, note_id: int, content: str) -> Note:
 
     note = session.scalar(
         select(Note).where(
@@ -100,8 +98,6 @@ def write_note(
 
     if not note:
         raise ValueError("Note does not exist")
-
-    note.title = title
     note.content = content
     try:
         session.commit()
