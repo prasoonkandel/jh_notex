@@ -20,12 +20,11 @@ BEARER = Annotated[HTTPAuthorizationCredentials, Depends(security)]
 CURRENT_USER = Annotated[User, Depends(get_current_user)]
 
 
-@router.post("/notes")
+@router.post("/notes", response_model=NoteResponse)
 def create(
     request: CreateNoteRequest,
     current_user: CURRENT_USER,
     session: SessionDep,
-    response_model=NoteResponse,
 ):
     try:
         note = create_note(session, current_user, request.title)
