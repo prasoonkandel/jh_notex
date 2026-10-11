@@ -18,5 +18,5 @@ class CreateNoteRequest(BaseModel):
 
 class UpdateNoteRequest(BaseModel):
     id: int
-    title: str
+    title: str | None = None
     content: str | None = None
