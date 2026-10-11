@@ -1,9 +1,7 @@
-from multiprocessing import Value
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from sqlalchemy.orm.session import Session
 
 from core.security import (
     create_access_token,
