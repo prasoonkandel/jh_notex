@@ -1,11 +1,9 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import HTTPAuthorizationCredentials
 
 from core.security import (
-    create_access_token,
-    decode_access_token,
     hash_password,
     password_hash,
     verify_password,
