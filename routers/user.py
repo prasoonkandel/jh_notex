@@ -102,7 +102,7 @@ def username(
     return {"message": "User Information Updated!"}
 
 
-@router.delete("/delete")
+@router.delete("/me")
 def delete(
     request: DeleteUserRequest,
     current_user: CURRENT_USER,
