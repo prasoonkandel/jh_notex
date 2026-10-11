@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
+from starlette.status import HTTP_409_CONFLICT
 
 from database.dependency import SessionDep
 from dependencies.auth import get_current_user, security
@@ -33,6 +34,8 @@ def create(
     session: SessionDep,
     response_model=NoteResponse,
 ):
-    note = create_note(session, current_user, request.title)
-
-    return NoteResponse(id=note.id, title=note.title, content=note.content)
+    try:
+        note = create_note(session, current_user, request.title)
+        return NoteResponse(id=note.id, title=note.title, content=note.content)
+    except ValueError as e:
+        raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
