@@ -7,7 +7,7 @@ class UserResponse(BaseModel):
     username: str
 
 
-class ChangePasswordRequest(BaseModel):
+class UpdatePasswordRequest(BaseModel):
     old_password: str
     new_password: str
 
