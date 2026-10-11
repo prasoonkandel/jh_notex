@@ -16,5 +16,9 @@ class CreateNoteRequest(BaseModel):
     title: str
 
 
+class WriteContentRequest(BaseModel):
+    content: str
+
+
 class DeleteNoteRequest(BaseModel):
     id: int
