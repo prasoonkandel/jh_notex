@@ -12,7 +12,7 @@ from schemas.note import CreateNoteRequest, NoteRequest, NoteResponse, UpdateNot
 
 router = APIRouter(
     prefix="/api",
-    tags=["Note Operations"],
+    tags=["Notes Operations"],
 )
 
 BEARER = Annotated[HTTPAuthorizationCredentials, Depends(security)]
