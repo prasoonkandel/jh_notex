@@ -15,3 +15,8 @@ from schemas.note import (
     NoteResponse,
     WriteContentRequest,
 )
+
+router = APIRouter(
+    prefix="/api/note",
+    tags=["Note Operations"],
+)
