@@ -16,14 +16,10 @@ class CreateNoteRequest(BaseModel):
     title: str
 
 
-class WriteContentRequest(BaseModel):
-    id: int
-    content: str
-
-
-class ChangeTitleRequest(BaseModel):
+class UpdateNoteRequest(BaseModel):
     id: int
     title: str
+    content: str | None = None
 
 
 class DeleteNoteRequest(BaseModel):
