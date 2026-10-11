@@ -7,7 +7,7 @@ from starlette.status import HTTP_409_CONFLICT
 from database.dependency import SessionDep
 from dependencies.auth import get_current_user, security
 from models.user import User
-from repositories.note import change_title, create_note, write_content
+from repositories.note import change_title, create_note, delete_note, write_content
 from schemas.note import (
     ChangeTitleRequest,
     CreateNoteRequest,
@@ -58,5 +58,18 @@ def title(request: ChangeTitleRequest, current_user: CURRENT_USER, session: Sess
         change_title(session, current_user, request.id, request.title)
         return {"message": "Title Changed Succesfully"}
 
+    except ValueError as e:
+        raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
+
+
+@router.delete("/delete")
+def delete(
+    request: DeleteNoteRequest,
+    current_user: CURRENT_USER,
+    session: SessionDep,
+):
+    try:
+        delete_note(session, current_user, request.id)
+        return {"message": "User Deleted Successfully"}
     except ValueError as e:
         raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
