@@ -15,4 +15,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(25), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
 
-    notes: Mapped[list["Note"]] = relationship(back_populates="user")
+    notes: Mapped[list["Note"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
