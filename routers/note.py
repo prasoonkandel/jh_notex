@@ -50,19 +50,25 @@ def create(
     "/notes?titles_only",
     response_model=list[NoteResponse | NoteSummary],
 )
+@router.get(
+    "/notes",
+    response_model=list[NoteResponse | NoteSummary],
+)
 def notes(
     current_user: CURRENT_USER,
     session: SessionDep,
     titles_only: bool = False,
 ):
-
     if titles_only:
         notes = get_titles_with_id(session, current_user)
+
         response = []
         for note_id, title in notes:
             response.append(NoteSummary(id=note_id, title=title))
 
-        return get_notes(session, current_user)
+        return response
+
+    return get_notes(session, current_user)
 
 
 @router.patch("/notes")
