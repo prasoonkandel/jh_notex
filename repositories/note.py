@@ -10,7 +10,7 @@ from models.user import User
 
 def create_note(session: Session, user: User, title: str) -> Note:
 
-    note = Note(user_id=user.id, title=title)
+    note = Note(user_id=user.id, title=title, content="")
     try:
         session.add(note)
         session.commit()
