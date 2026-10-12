@@ -47,10 +47,6 @@ def create(
 
 
 @router.get(
-    "/notes?titles_only",
-    response_model=list[NoteResponse | NoteSummary],
-)
-@router.get(
     "/notes",
     response_model=list[NoteResponse | NoteSummary],
 )
