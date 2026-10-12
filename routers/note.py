@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_409_CONFLICT
 
 from database.dependency import SessionDep
 from dependencies.auth import get_current_user, security
@@ -74,7 +74,7 @@ def note(current_user: CURRENT_USER, session: SessionDep, note_id: int):
         note = get_note(session, current_user, note_id)
         return NoteResponse(id=note.id, title=note.title, content=note.content)
     except ValueError as e:
-        raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail=str(e))
 
 
 @router.patch("/notes")
@@ -88,13 +88,13 @@ def write(request: UpdateNoteRequest, current_user: CURRENT_USER, session: Sessi
         try:
             change_title(session, current_user, request.id, request.title)
         except ValueError as e:
-            raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
+            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail=str(e))
 
     if request.content:
         try:
             write_content(session, current_user, request.id, request.content)
         except ValueError as e:
-            raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
+            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail=str(e))
 
     return {"message": "Note Updated Successfully!"}
 
@@ -109,4 +109,4 @@ def delete(
         delete_note(session, current_user, note_id)
         return {"message": "User Deleted Successfully"}
     except ValueError as e:
-        raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail=str(e))
