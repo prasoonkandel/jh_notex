@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class RegisterRequest(BaseModel):
     username: str = Field(
         min_length=3,
-        max_length=30,
+        max_length=25,
     )
     password: str = Field(
         min_length=8,
