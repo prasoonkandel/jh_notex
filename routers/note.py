@@ -60,7 +60,7 @@ def notes(
         notes = get_titles_with_id(session, current_user)
         response = []
         for note_id, title in notes:
-            response.append({"id": note_id, "title": title})
+            response.append(NoteSummary(id=note_id, title=title))
 
         return get_notes(session, current_user)
 
