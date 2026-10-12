@@ -7,3 +7,7 @@
 - Note storing in MySQL Database
 - Authentication using JWT
 - Proper documentation using FastAPI docs
+
+
+## Tech Stack:
+ <img src="https://skillicons.dev/icons?i=python,fastapi,mysql,vercel,git,github" />
