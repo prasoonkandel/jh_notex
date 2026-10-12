@@ -35,9 +35,10 @@ def create(
 
 @router.patch("/notes")
 def write(request: UpdateNoteRequest, current_user: CURRENT_USER, session: SessionDep):
-    if not request.title or request.content:
+    if request.title is None and request.content is None:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="No Updation Information Provided"
+            status_code=400,
+            detail="No update information provided",
         )
     if request.title:
         try:
