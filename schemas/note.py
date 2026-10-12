@@ -12,6 +12,11 @@ class NoteResponse(BaseModel):
     content: str
 
 
+class NoteSummary(BaseModel):
+    id: int
+    title: str
+
+
 class CreateNoteRequest(BaseModel):
     title: str
 
