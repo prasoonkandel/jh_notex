@@ -7,8 +7,21 @@ from starlette.status import HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT
 from database.dependency import SessionDep
 from dependencies.auth import get_current_user, security
 from models.user import User
-from repositories.note import change_title, create_note, delete_note, write_content
-from schemas.note import CreateNoteRequest, NoteRequest, NoteResponse, UpdateNoteRequest
+from repositories.note import (
+    change_title,
+    create_note,
+    delete_note,
+    get_notes,
+    get_titles_with_id,
+    write_content,
+)
+from schemas.note import (
+    CreateNoteRequest,
+    NoteRequest,
+    NoteResponse,
+    NoteSummary,
+    UpdateNoteRequest,
+)
 
 router = APIRouter(
     prefix="/api",
@@ -31,6 +44,25 @@ def create(
         return NoteResponse(id=note.id, title=note.title, content=note.content)
     except ValueError as e:
         raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
+
+
+@router.get(
+    "/notes?titles_only",
+    response_model=list[NoteResponse | NoteSummary],
+)
+def notes(
+    current_user: CURRENT_USER,
+    session: SessionDep,
+    titles_only: bool = False,
+):
+
+    if titles_only:
+        notes = get_titles_with_id(session, current_user)
+        response = []
+        for note_id, title in notes:
+            response.append({"id": note_id, "title": title})
+
+        return get_notes(session, current_user)
 
 
 @router.patch("/notes")
