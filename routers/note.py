@@ -11,6 +11,7 @@ from repositories.note import (
     change_title,
     create_note,
     delete_note,
+    get_note,
     get_notes,
     get_titles_with_id,
     write_content,
@@ -65,6 +66,15 @@ def notes(
         return response
 
     return get_notes(session, current_user)
+
+
+@router.get("/notes/{note_id}", response_model=NoteResponse)
+def note(current_user: CURRENT_USER, session: SessionDep, note_id: int):
+    try:
+        note = get_note(session, current_user, note_id)
+        return NoteResponse(id=note.id, title=note.title, content=note.content)
+    except ValueError as e:
+        raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
 
 
 @router.patch("/notes")
