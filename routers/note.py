@@ -84,6 +84,8 @@ def write(request: UpdateNoteRequest, current_user: CURRENT_USER, session: Sessi
         except ValueError as e:
             raise HTTPException(status_code=HTTP_409_CONFLICT, detail=str(e))
 
+    return {"message": "Note Updated Successfully!"}
+
 
 @router.delete("/notes/{note_id}")
 def delete(
