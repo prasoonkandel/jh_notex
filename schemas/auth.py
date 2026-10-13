@@ -1,4 +1,6 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from schemas.user import validate_username
 
 
 class RegisterRequest(BaseModel):
@@ -10,6 +12,11 @@ class RegisterRequest(BaseModel):
         min_length=8,
         max_length=128,
     )
+
+    @field_validator("username")
+    @classmethod
+    def check_username(cls, value: str) -> str:
+        return validate_username(value)
 
 
 class LoginRequest(BaseModel):
