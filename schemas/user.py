@@ -1,6 +1,6 @@
 import re
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 def validate_username(value: str) -> str:
@@ -24,6 +24,11 @@ class UpdatePasswordRequest(BaseModel):
 
 class UpdateUserRequest(BaseModel):
     new_username: str | None = None
+
+    @field_validator("new_username")
+    @classmethod
+    def check_username(cls, value: str) -> str:
+        return validate_username(value)
 
 
 class DeleteUserRequest(BaseModel):
