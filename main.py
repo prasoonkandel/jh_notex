@@ -7,7 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers.auth import router as auth_router
 from routers.note import router as note_router
 from routers.user import router as user_router
-from schemas.user import origins
 
 app = FastAPI(
     title="JingHua Notex API",
