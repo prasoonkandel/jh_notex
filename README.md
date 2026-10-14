@@ -4,15 +4,8 @@
 
 
 <p>
-    <a href="https://jh-notex.vercel.app" target="_blank">
-        <img src="https://img.shields.io/badge/Open_Website-166534?style=for-the-badge&logo=vercel&logoColor=white" />
-    </a>
-</p>
-
-
-<p>
     <a href="https://jh-notex.vercel.app/docs" target="_blank">
-        <img src="https://img.shields.io/badge/Open_Website-166534?style=for-the-badge&logo=vercel&logoColor=white" />
+       <img src="https://img.shields.io/badge/API_Docs-7E22CE?style=for-the-badge&logo=vercel&logoColor=white" />
     </a>
 </p>
 
