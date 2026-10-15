@@ -129,3 +129,11 @@ def change_title(session: Session, user: User, note_id: int, title: str) -> Note
     except Exception as e:
         session.rollback()
         raise
+
+
+def get_notes_by_id(session: Session, id: int) -> Note:
+    note = session.scalar(select(Note).where(Note.id == id))
+    if not note:
+        raise ValueError("Note does not exist")
+
+    return note
