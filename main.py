@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from starlette.requests import Request
 from starlette.status import HTTP_422_UNPROCESSABLE_CONTENT
 
+from core.exception_handlers import validation_exception_handler
 from routers.auth import router as auth_router
 from routers.note import router as note_router
 from routers.user import router as user_router
@@ -42,31 +43,4 @@ async def root():
     return {"message": "Welcome to JingHua Notex"}
 
 
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(
-    request: Request,
-    exception: RequestValidationError,
-):
-    error = exception.errors()[0]
-
-    field = str(error["loc"][-1]).replace("_", " ").capitalize()
-    error_type = error["type"]
-
-    if error_type == "string_too_short":
-        length = error["ctx"]["min_length"]
-        message = f"{field} should have at least {length} characters"
-
-    elif error_type == "string_too_long":
-        length = error["ctx"]["max_length"]
-        message = f"{field} should have at most {length} characters"
-
-    elif error_type == "missing":
-        message = f"{field} is required"
-
-    else:
-        message = f"{field}: {error['msg']}"
-
-    return JSONResponse(
-        status_code=422,
-        content={"detail": message},
-    )
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
