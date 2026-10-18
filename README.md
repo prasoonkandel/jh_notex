@@ -1,6 +1,6 @@
 # JingHua Notex
 
-> JingHua Notex is a simple notes app. It helps you to generate mini notes online. You do not have to log in to store your notes properly. It is still work in progress.
+> JingHua Notex is a simple, web-based notes app that lets you create an account without sharing personal information like your email address or phone number. You can create, edit, and store your notes online and access them whenever you need them.
 
 
 <p>
