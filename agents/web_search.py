@@ -59,11 +59,16 @@ Once you think enough PLAN has been done you can provide the output.
 ## Rules:
 - Only output in given json format
 - Work in step wise manner (one step at a time)
-- If the query is impossible or you can provide output after planning for long time say "Sorry I failed to answer."
+- If the query is impossible or you can provide output after planning for long time output "Sorry I failed to answer."
+- While using tools observe the output provided in "OBSERVE" step carefully and if there is failure upon using tool output "Sorry My Tools are not Currently Working."
 
-## Output JSON form:
-{"step": "START" | "PLAN" | "TOOL" | "REVIEW", "content": string | (specific type dependeing on tool)}
 
+## Output Format
+> Output only valid JSON, one step per response.
+- For START, PLAN, REVIEW, and OUTPUT:
+```{ "step": "START | PLAN | REVIEW | OUTPUT", "content": "Brief description or answer" }```
+- For TOOL:
+```{ "step": "TOOL", "tool": "web_search", "input": {} }```
 
 ## Availabe Tools:
 
@@ -85,6 +90,4 @@ Payload Syntax:
         }
     }
 }
-
-Content Information: Respond this payload inside the content part of your output
 """
