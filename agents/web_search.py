@@ -23,7 +23,7 @@ if SEARCH_API_URL is None:
     raise ValueError("SEARCH_API_URL is missing")
 
 
-model = "google/gemini-3.8-flash"
+model = "~openai/gpt-mini-latest"
 embedding_model = "voyageai/voyage-4-lite"
 
 
@@ -45,10 +45,12 @@ def web_search(payload):
         json=payload,
     )
 
-    for result in response.json()["results"]:
-        print(result["title"], result["url"])
-        print(result["text"])
+    response.raise_for_status()
 
+    return response.json()["results"]
+
+
+available_tools = {"web_search": web_search}
 
 SYSTEM_PROMPT = """
 ## Role
@@ -67,19 +69,25 @@ Plan can be multiple steps and you can also use the tools multiple time and use 
 (plan-tool-review) loop can run multiple times.
 Once you think enough PLAN has been done you can provide the output.
 
+
 ## Rules:
+- Always start from START step and PLAN before OUTPUT
+- Never give direct OUTPUT
+- Use Tools if you are not confident
 - Only output in given json format
 - Work in step wise manner (one step at a time)
-- If the query is impossible or you can provide output after planning for long time output "Sorry I failed to answer."
 - While using tools observe the output provided in "OBSERVE" step carefully and if there is failure upon using tool output "Sorry My Tools are not Currently Working."
-
+- Do not ever ask user follow up questions
+- Always use successfully retrieved search results as evidence; never claim tools failed if they executed successfully and returned results.
+- Answer confidently using facts explicitly supported by reliable sources, citing URLs when available; avoid unnecessary disclaimers.
+- If evidence is incomplete or conflicting, provide the supported information and clearly identify only what remains uncertain.
 
 ## Output Format
 > Output only valid JSON, one step per response.
 - For START, PLAN, REVIEW, and OUTPUT:
-```{ "step": "START | PLAN | REVIEW | OUTPUT", "content": "Brief description or answer" }```
+{ "step": "START | PLAN | REVIEW | OUTPUT", "content": "Brief description or answer" }
 - For TOOL:
-```{ "step": "TOOL", "tool": "web_search", "input": {} }```
+{ "step": "TOOL", "tool": "web_search", "input": {} }
 
 ## Availabe Tools:
 
@@ -101,4 +109,85 @@ Payload Syntax:
         }
     }
 }
+
+Instructions:
+If you used this search tool please provide user summmary of full information rather than just telling I can not find reliable information.
 """
+
+
+memory = []
+
+memory.append({"role": "system", "content": SYSTEM_PROMPT})
+
+
+def answer(query: str):
+    memory.append({"role": "user", "content": query})
+
+    while True:
+        headers = {
+            "Authorization": f"Bearer {API_KEY}",
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "model": model,
+            "messages": memory,
+            "temperature": 0.2,
+            "max_tokens": 3000,
+            "response_format": {"type": "json_object"},
+        }
+        response = requests.post(API_URL, headers=headers, json=payload)
+
+        if not response.ok:
+            print("Status:", response.status_code)
+            print("Error:", response.text)
+            response.raise_for_status()
+
+        response.raise_for_status()
+
+        result = json.loads(response.json()["choices"][0]["message"]["content"].strip())
+
+        print(result)
+
+        memory.append({"role": "assistant", "content": json.dumps(result)})
+
+        if result["step"] == "TOOL":
+            try:
+                output = available_tools[result["tool"]](result["input"])
+
+                if not output:
+                    observation = {
+                        "step": "OBSERVE",
+                        "success": True,
+                        "content": "Search completed, but returned no results.",
+                    }
+                else:
+                    observation = {
+                        "step": "OBSERVE",
+                        "success": True,
+                        "content": output,
+                    }
+
+            except Exception as e:
+                observation = {
+                    "step": "OBSERVE",
+                    "success": False,
+                    "content": str(e),
+                }
+
+            memory.append(
+                {
+                    "role": "user",
+                    "content": json.dumps(observation, default=str),
+                }
+            )
+
+        elif result["step"] == "OUTPUT":
+            print("Output:", result["content"])
+            return result["content"]
+
+        elif result["step"] in ("START", "PLAN", "REVIEW"):
+            continue
+
+        else:
+            raise ValueError(f"Unknown step: {result['step']}")
