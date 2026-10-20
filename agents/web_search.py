@@ -11,6 +11,17 @@ load_dotenv()
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 API_URL = os.getenv("OPENROUTER_API_URL")
 EMBEDDING_API_URL = os.getenv("OPENROUTER_EMBEDDING_API_URL")
+SEARCH_API_URL = os.getenv("SEARCH_API_URL")
+
+if API_KEY is None:
+    raise ValueError("OPENROUTER_API_KEY is missing")
+if API_URL is None:
+    raise ValueError("OPENROUTER_API_URL is missing")
+if EMBEDDING_API_URL is None:
+    raise ValueError("OPENROUTER_EMBEDDING_API_URL is missing")
+if SEARCH_API_URL is None:
+    raise ValueError("SEARCH_API_URL is missing")
+
 
 model = "google/gemini-3.8-flash"
 embedding_model = "voyageai/voyage-4-lite"
@@ -29,7 +40,7 @@ def web_search(payload):
     # }
 
     response = requests.post(
-        "https://ai.hackclub.com/proxy/v1/exa/search",
+        SEARCH_API_URL,
         headers=headers,
         json=payload,
     )
