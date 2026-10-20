@@ -13,7 +13,6 @@
 ## Features
 - Secure and working Backend 
 - Note storing in MySQL Database
-- Authentication using JWT
 - Proper documentation using FastAPI docs
 
 
