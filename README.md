@@ -11,10 +11,11 @@
 
 
 ## Features
-- Secure and working Backend 
-- Note storing in MySQL Database
-- Proper documentation using FastAPI docs
-
+- Secure RESTful backend built with FastAPI
+- MySQL database for storing and managing notes
+- JWT-based authentication and secure password hashing
+- Complete note management (Create, Read, Update, Delete)
+- Automatic API documentation using FastAPI Swagger UI
 
 ## Tech Stack:
  <img src="https://skillicons.dev/icons?i=python,fastapi,mysql,vercel,git,github" />
