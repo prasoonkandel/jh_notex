@@ -1,0 +1,52 @@
+from typing import Any, cast
+
+from sqlalchemy import delete, select
+from sqlalchemy.engine import CursorResult
+from sqlalchemy.orm import Session
+
+from models.share import Share
+from repositories.note import get_note_by_id
+
+
+def create_share(session: Session, note_id: int, share_code: str) -> Share:
+    existing_share = session.scalar(select(Share).where(Share.share_code == share_code))
+
+    if existing_share:
+        raise ValueError("Share already exists")
+
+    share = Share(note_id=note_id, share_code=share_code)
+
+    try:
+        session.add(share)
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+
+    return share
+
+
+def get_shared_note(session: Session, share_code: str):
+    share = session.scalar(select(Share).where(Share.share_code == share_code))
+
+    if not share:
+        raise ValueError("Share does not exists!")
+
+    note = get_note_by_id(session, share.note_id)
+
+    return note
+
+
+def delete_shares(session: Session, note_id: int) -> int:
+    try:
+        result = cast(
+            CursorResult[Any],
+            session.execute(delete(Share).where(Share.note_id == note_id)),
+        )
+
+        count = result.rowcount
+        session.commit()
+        return count
+    except Exception:
+        session.rollback()
+        raise

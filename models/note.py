@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.base import Base
 
 if TYPE_CHECKING:
+    from models.share import Share
     from models.user import User
 
 
@@ -18,3 +19,7 @@ class Note(Base):
     content: Mapped[str] = mapped_column(Text)
 
     user: Mapped["User"] = relationship(back_populates="notes")
+    shares: Mapped[list["Share"]] = relationship(
+        back_populates="note",
+        cascade="all, delete-orphan",
+    )
