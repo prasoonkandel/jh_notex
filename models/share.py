@@ -13,6 +13,6 @@ class Share(Base):
     __tablename__ = "shares"
 
     note_id: Mapped[int] = mapped_column(ForeignKey("notes.id"))
-    base64_code: Mapped[str]
+    share_code: Mapped[str]
 
     note: Mapped["Note"] = relationship(back_populates="shares")
