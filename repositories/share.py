@@ -1,4 +1,7 @@
-from sqlalchemy import select
+from typing import Any, cast
+
+from sqlalchemy import delete, select
+from sqlalchemy.engine import CursorResult
 from sqlalchemy.orm import Session
 
 from models.note import Note
@@ -33,3 +36,18 @@ def get_shared_note(session: Session, share_code: str):
     note = get_note_by_id(session, share.note_id)
 
     return note
+
+
+def delete_shares(session: Session, note_id: int) -> int:
+    try:
+        result = cast(
+            CursorResult[Any],
+            session.execute(delete(Share).where(Share.note_id == note_id)),
+        )
+
+        count = result.rowcount
+        session.commit()
+        return count
+    except Exception:
+        session.rollback()
+        raise
